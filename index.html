@@ -4,7 +4,150 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asociación del Banco Estudiantil (ABE)</title>
-    <link rel="stylesheet" href="bancoestudiantil/style.css">
+    <link rel="stylesheet" href="style.css">
+    <!-- Agrega Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-analytics.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+        import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDu_e1lfkYMqGImyXv8bM7It4cmvmarysc",
+            authDomain: "abe-3346d.firebaseapp.com",
+            projectId: "abe-3346d",
+            storageBucket: "abe-3346d.firebasestorage.app",
+            messagingSenderId: "671744961564",
+            appId: "1:671744961564:web:a99f9cd7a498f31935c3d9",
+            measurementId: "G-V030K55H15"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth();
+        const database = getDatabase(app);
+
+        // Registro de cuenta
+        document.getElementById("registerForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let name = document.getElementById("name").value;
+            let phone = document.getElementById("phone").value;
+            let accountType = document.getElementById("accountType").value;
+            let password = document.getElementById("password").value;
+
+            if (name && phone && accountType && password) {
+                let accountID = "ABE" + Math.floor(Math.random() * 1000000);
+                let user = { id: accountID, name, phone, type: accountType, password, balance: 0 };
+
+                set(ref(database, 'accounts/' + accountID), user);
+
+                document.getElementById("accountID").innerText = "Tu ID de cuenta es: " + accountID;
+                document.getElementById("registerForm").reset();
+            }
+        });
+
+        // Verificar cuenta
+        function verifyAccount() {
+            let verifyID = document.getElementById("verifyID").value;
+            let verifyPassword = document.getElementById("verifyPassword").value;
+
+            get(child(ref(database), `accounts/${verifyID}`)).then((snapshot) => {
+                if (snapshot.exists() && snapshot.val().password === verifyPassword) {
+                    let account = snapshot.val();
+                    document.getElementById("verificationResult").innerText = 
+                        `Cuenta encontrada: ${account.name} - ${account.type} - Saldo: $${account.balance}`;
+                } else {
+                    document.getElementById("verificationResult").innerText = "Cuenta no encontrada o contraseña incorrecta.";
+                }
+            });
+        }
+
+        // Depositar
+        function deposit() {
+            let accountID = document.getElementById("accountIDTransaction").value;
+            let password = document.getElementById("passwordTransaction").value;
+            let amount = parseFloat(document.getElementById("amount").value);
+
+            get(child(ref(database), `accounts/${accountID}`)).then((snapshot) => {
+                if (snapshot.exists() && snapshot.val().password === password && amount > 0) {
+                    let account = snapshot.val();
+                    account.balance += amount;
+                    update(ref(database, 'accounts/' + accountID), { balance: account.balance });
+                    alert(`Depósito exitoso. Nuevo saldo: $${account.balance}`);
+                } else {
+                    alert("Datos incorrectos o monto inválido.");
+                }
+            });
+        }
+
+        // Retirar
+        function withdraw() {
+            let accountID = document.getElementById("accountIDTransaction").value;
+            let password = document.getElementById("passwordTransaction").value;
+            let amount = parseFloat(document.getElementById("amount").value);
+
+            get(child(ref(database), `accounts/${accountID}`)).then((snapshot) => {
+                if (snapshot.exists() && snapshot.val().password === password && amount > 0 && snapshot.val().balance >= amount) {
+                    let account = snapshot.val();
+                    account.balance -= amount;
+                    update(ref(database, 'accounts/' + accountID), { balance: account.balance });
+                    alert(`Retiro exitoso. Nuevo saldo: $${account.balance}`);
+                } else {
+                    alert("Fondos insuficientes o datos incorrectos.");
+                }
+            });
+        }
+
+        // Transferir
+        function transfer() {
+            let senderID = document.getElementById("senderID").value;
+            let senderPassword = document.getElementById("senderPassword").value;
+            let receiverID = document.getElementById("receiverID").value;
+            let amount = parseFloat(document.getElementById("transferAmount").value);
+
+            get(child(ref(database), `accounts/${senderID}`)).then((senderSnapshot) => {
+                if (senderSnapshot.exists() && senderSnapshot.val().password === senderPassword && senderSnapshot.val().balance >= amount) {
+                    let sender = senderSnapshot.val();
+                    get(child(ref(database), `accounts/${receiverID}`)).then((receiverSnapshot) => {
+                        if (receiverSnapshot.exists()) {
+                            let receiver = receiverSnapshot.val();
+                            sender.balance -= amount;
+                            receiver.balance += amount;
+                            update(ref(database, 'accounts/' + senderID), { balance: sender.balance });
+                            update(ref(database, 'accounts/' + receiverID), { balance: receiver.balance });
+                            alert(`Transferencia de $${amount} a ${receiver.id} exitosa.`);
+                        } else {
+                            alert("Error en la transferencia.");
+                        }
+                    });
+                } else {
+                    alert("Error en la transferencia.");
+                }
+            });
+        }
+
+        // Iniciar sesión
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let email = document.getElementById("loginEmail").value;
+            let password = document.getElementById("loginPassword").value;
+
+            signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                let user = userCredential.user;
+                alert("Inicio de sesión exitoso");
+            })
+            .catch((error) => {
+                let errorMessage = error.message;
+                document.getElementById("loginError").innerText = "Error: " + errorMessage;
+            });
+        });
+    </script>
 </head>
 <body>
     <header class="header">
@@ -57,7 +200,5 @@
     <footer class="footer">
         <p>&copy; 2025 Banco Estudiantil (ABE). Todos los derechos reservados.</p>
     </footer>
-
-    <script src="script.js"></script>
 </body>
 </html>
