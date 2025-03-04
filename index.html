@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco Estudiantil</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Banco Estudiantil</h1>
+    </header>
+    
+    <div class="form-container">
+        <h2>Registro de Cuenta</h2>
+        <form id="registerForm">
+            <input type="text" id="name" placeholder="Nombre" required><br>
+            <input type="text" id="phone" placeholder="Número de Teléfono" required><br>
+            <select id="accountType">
+                <option value="ahorro">Cuenta de Ahorro</option>
+                <option value="prestamo">Cuenta de Préstamos</option>
+            </select><br>
+            <button type="submit">Registrar</button>
+        </form>
+    </div>
+
+    <div class="form-container">
+        <h2>Depositar Dinero</h2>
+        <form id="depositForm">
+            <input type="text" id="depositName" placeholder="Nombre de la Cuenta" required><br>
+            <input type="number" id="depositAmount" placeholder="Monto a Depositar" required><br>
+            <button type="submit">Depositar</button>
+        </form>
+    </div>
+
+    <div class="form-container">
+        <h2>Transferir Dinero</h2>
+        <form id="transferForm">
+            <input type="text" id="sender" placeholder="Nombre del Remitente" required><br>
+            <input type="text" id="receiver" placeholder="Nombre del Destinatario" required><br>
+            <input type="number" id="transferAmount" placeholder="Monto a Transferir" required><br>
+            <button type="submit">Transferir</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>Para ayuda, comunícate al número: 829-332-9545</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
