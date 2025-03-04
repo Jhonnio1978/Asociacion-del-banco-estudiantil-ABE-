@@ -1,40 +1,67 @@
+/* Fondo con un degradado */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    text-align: center;
-}
-
-header {
-    background-color: green;
+    background: linear-gradient(to right, #004d00, #008000);
+    font-family: 'Arial', sans-serif;
     color: white;
-    padding: 15px;
-    font-size: 24px;
+    margin: 0;
+    padding: 0;
 }
 
+/* Estilo para el encabezado */
+header {
+    background-color: #002d00;
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Contenedor principal */
 .container {
-    background: white;
-    width: 50%;
+    width: 80%;
     margin: 20px auto;
+    background: rgba(255, 255, 255, 0.1);
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
 }
 
-input, select, button {
-    display: block;
-    width: 80%;
-    margin: 10px auto;
+/* Estilo para los formularios */
+input, select {
+    width: 100%;
     padding: 10px;
-    font-size: 16px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
 }
 
+input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Botones */
 button {
-    background-color: green;
+    width: 100%;
+    padding: 10px;
+    background-color: #00cc00;
     color: white;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
+    font-size: 18px;
 }
 
 button:hover {
-    background-color: darkgreen;
+    background-color: #009900;
+}
+
+/* Estilo para las tarjetas de cuenta */
+.card {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 8px;
+    text-align: center;
 }
