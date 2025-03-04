@@ -3,50 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banco Estudiantil</title>
-    <link rel="stylesheet" href="style.css">
+    <title>ABE - Asociación del Banco Estudiantil</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Enlace al archivo CSS -->
 </head>
 <body>
-    <header>
-        <h1>Banco Estudiantil</h1>
-    </header>
-    
-    <div class="form-container">
-        <h2>Registro de Cuenta</h2>
-        <form id="registerForm">
-            <input type="text" id="name" placeholder="Nombre" required><br>
-            <input type="text" id="phone" placeholder="Número de Teléfono" required><br>
-            <select id="accountType">
-                <option value="ahorro">Cuenta de Ahorro</option>
-                <option value="prestamo">Cuenta de Préstamos</option>
-            </select><br>
-            <button type="submit">Registrar</button>
-        </form>
+
+    <div class="header">🏦 ABE - Asociación del Banco Estudiantil</div>
+
+    <!-- Registro -->
+    <div class="container">
+        <h2>Registro de Usuario</h2>
+        <input type="text" id="nombre" placeholder="Nombre completo">
+        <input type="text" id="telefono" placeholder="Número de teléfono">
+        <input type="password" id="contraseña" placeholder="Contraseña">
+        <button onclick="registrarUsuario()">Registrarse</button>
+        <div id="resultadoRegistro"></div>
     </div>
 
-    <div class="form-container">
-        <h2>Depositar Dinero</h2>
-        <form id="depositForm">
-            <input type="text" id="depositName" placeholder="Nombre de la Cuenta" required><br>
-            <input type="number" id="depositAmount" placeholder="Monto a Depositar" required><br>
-            <button type="submit">Depositar</button>
-        </form>
+    <!-- Inicio de sesión -->
+    <div class="container">
+        <h2>Iniciar Sesión</h2>
+        <input type="text" id="loginCuenta" placeholder="Número de cuenta">
+        <input type="password" id="loginContraseña" placeholder="Contraseña">
+        <button onclick="iniciarSesion()">Ingresar</button>
+        <div id="resultadoLogin"></div>
     </div>
 
-    <div class="form-container">
-        <h2>Transferir Dinero</h2>
-        <form id="transferForm">
-            <input type="text" id="sender" placeholder="Nombre del Remitente" required><br>
-            <input type="text" id="receiver" placeholder="Nombre del Destinatario" required><br>
-            <input type="number" id="transferAmount" placeholder="Monto a Transferir" required><br>
-            <button type="submit">Transferir</button>
-        </form>
+    <!-- Verificar Saldo -->
+    <div class="container">
+        <h2>Consulta de Saldo</h2>
+        <button onclick="verificarSaldo()">Ver Saldo</button>
+        <div id="saldoCuenta"></div>
     </div>
 
-    <footer>
-        <p>Para ayuda, comunícate al número: 829-332-9545</p>
-    </footer>
+    <!-- Transferencias -->
+    <div class="container">
+        <h2>Transferencia de Dinero</h2>
+        <input type="text" id="cuentaDestino" placeholder="Número de cuenta destino">
+        <input type="number" id="montoTransferencia" placeholder="Monto a transferir">
+        <button onclick="transferirDinero()">Transferir</button>
+        <div id="resultadoTransferencia"></div>
+    </div>
 
-    <script src="script.js"></script>
+    <div class="footer">📞 Asistencia: 829-332-9545 | ABE - Asociación del Banco Estudiantil © 2025</div>
+
+    <script src="banco.js"></script> <!-- Enlace al archivo JavaScript -->
+
 </body>
 </html>
