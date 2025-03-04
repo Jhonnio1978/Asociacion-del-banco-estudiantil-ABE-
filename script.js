@@ -23,7 +23,7 @@ function registrarUsuario() {
         telefono: telefono,
         numeroCuenta: numeroCuenta,
         contraseña: contraseña,
-        saldo: 0 // Saldo inicial en 0
+        saldo: 100 // Saldo inicial 100
     };
 
     usuarios.push(usuario);
