@@ -33,9 +33,10 @@ async function guardarRegistro(data) {
 async function registrarUsuario() {
     let nombre = document.getElementById("nombre").value;
     let telefono = document.getElementById("telefono").value;
+    let correo = document.getElementById("correo").value; // Nuevo campo de correo electrónico
     let contraseña = document.getElementById("contraseña").value;
 
-    if (nombre === "" || telefono === "" || contraseña === "") {
+    if (nombre === "" || telefono === "" || correo === "" || contraseña === "") {
         alert("Por favor, completa todos los campos.");
         return;
     }
@@ -44,6 +45,7 @@ async function registrarUsuario() {
     let usuario = {
         nombre: nombre,
         telefono: telefono,
+        correo: correo, // Agregar el correo al objeto usuario
         numeroCuenta: numeroCuenta,
         contraseña: contraseña,
         saldo: 100 // Saldo inicial 100
@@ -57,6 +59,7 @@ async function registrarUsuario() {
 
     document.getElementById("nombre").value = "";
     document.getElementById("telefono").value = "";
+    document.getElementById("correo").value = ""; // Limpiar el campo de correo electrónico
     document.getElementById("contraseña").value = "";
 }
 
