@@ -3,282 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asociación del Banco Estudiantil (ABE)</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Agrega Firebase SDK -->
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-analytics.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-        import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDu_e1lfkYMqGImyXv8bM7It4cmvmarysc",
-            authDomain: "abe-3346d.firebaseapp.com",
-            projectId: "abe-3346d",
-            storageBucket: "abe-3346d.firebasestorage.app",
-            messagingSenderId: "671744961564",
-            appId: "1:671744961564:web:a99f9cd7a498f31935c3d9",
-            measurementId: "G-V030K55H15"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const auth = getAuth();
-        const database = getDatabase(app);
-
-        // Registro de cuenta
-        document.getElementById("registerForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-
-            let fullName = document.getElementById("fullName").value;
-            let phone = document.getElementById("phone").value;
-            let accountType = document.getElementById("accountType").value;
-            let password = document.getElementById("password").value;
-            let schoolName = document.getElementById("schoolName").value;
-            let course = document.getElementById("course").value;
-            let age = document.getElementById("age").value;
-
-            if (fullName && phone && accountType && password && schoolName && course && age) {
-                let accountID = "ABE" + Math.floor(Math.random() * 1000000);
-                let user = { id: accountID, fullName, phone, type: accountType, password, schoolName, course, age, balance: 0 };
-
-                set(ref(database, 'accounts/' + accountID), user)
-                    .then(() => {
-                        document.getElementById("accountID").innerText = "Tu ID de cuenta es: " + accountID;
-                        document.getElementById("registerForm").reset();
-                    })
-                    .catch((error) => {
-                        console.error("Error al registrar la cuenta:", error);
-                        alert("Error al registrar la cuenta.");
-                    });
-            }
-        });
-
-        // Verificar cuenta
-        function verifyAccount() {
-            let verifyID = document.getElementById("verifyID").value;
-            let verifyPassword = document.getElementById("verifyPassword").value;
-
-            get(child(ref(database), `accounts/${verifyID}`))
-                .then((snapshot) => {
-                    if (snapshot.exists() && snapshot.val().password === verifyPassword) {
-                        let account = snapshot.val();
-                        document.getElementById("verificationResult").innerText = 
-                            `Cuenta encontrada: ${account.fullName} - ${account.type} - Saldo: $${account.balance}`;
-                    } else {
-                        document.getElementById("verificationResult").innerText = "Cuenta no encontrada o contraseña incorrecta.";
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error al verificar la cuenta:", error);
-                    document.getElementById("verificationResult").innerText = "Error al verificar la cuenta.";
-                });
-        }
-
-        // Depositar
-        function deposit() {
-            let accountID = document.getElementById("accountIDTransaction").value;
-            let password = document.getElementById("passwordTransaction").value;
-            let amount = parseFloat(document.getElementById("amount").value);
-            let confirmationCode = prompt("Ingrese el código de confirmación recibido en su escuela:");
-
-            get(child(ref(database), `accounts/${accountID}`))
-                .then((snapshot) => {
-                    if (snapshot.exists() && snapshot.val().password === password && amount > 0 && confirmationCode === "123456") { // Placeholder confirmation code
-                        let account = snapshot.val();
-                        account.balance += amount;
-                        update(ref(database, 'accounts/' + accountID), { balance: account.balance })
-                            .then(() => {
-                                alert(`Depósito exitoso. Nuevo saldo: $${account.balance}`);
-                            })
-                            .catch((error) => {
-                                console.error("Error al realizar el depósito:", error);
-                                alert("Error al realizar el depósito.");
-                            });
-                    } else {
-                        alert("Datos incorrectos o monto inválido.");
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error al verificar la cuenta:", error);
-                    alert("Error al verificar la cuenta.");
-                });
-        }
-
-        // Retirar
-        function withdraw() {
-            let accountID = document.getElementById("accountIDTransaction").value;
-            let password = document.getElementById("passwordTransaction").value;
-            let amount = parseFloat(document.getElementById("amount").value);
-            let confirmationCode = prompt("Ingrese el código de confirmación recibido en su escuela:");
-
-            get(child(ref(database), `accounts/${accountID}`))
-                .then((snapshot) => {
-                    if (snapshot.exists() && snapshot.val().password === password && amount > 0 && snapshot.val().balance >= amount && confirmationCode === "123456") { // Placeholder confirmation code
-                        let account = snapshot.val();
-                        account.balance -= amount;
-                        update(ref(database, 'accounts/' + accountID), { balance: account.balance })
-                            .then(() => {
-                                alert(`Retiro exitoso. Nuevo saldo: $${account.balance}`);
-                            })
-                            .catch((error) => {
-                                console.error("Error al realizar el retiro:", error);
-                                alert("Error al realizar el retiro.");
-                            });
-                    } else {
-                        alert("Fondos insuficientes o datos incorrectos.");
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error al verificar la cuenta:", error);
-                    alert("Error al verificar la cuenta.");
-                });
-        }
-
-        // Transferir
-        function transfer() {
-            let senderID = document.getElementById("senderID").value;
-            let senderPassword = document.getElementById("senderPassword").value;
-            let receiverID = document.getElementById("receiverID").value;
-            let amount = parseFloat(document.getElementById("transferAmount").value);
-
-            get(child(ref(database), `accounts/${senderID}`))
-                .then((senderSnapshot) => {
-                    if (senderSnapshot.exists() && senderSnapshot.val().password === senderPassword && senderSnapshot.val().balance >= amount) {
-                        let sender = senderSnapshot.val();
-                        get(child(ref(database), `accounts/${receiverID}`))
-                            .then((receiverSnapshot) => {
-                                if (receiverSnapshot.exists()) {
-                                    let receiver = receiverSnapshot.val();
-                                    sender.balance -= amount;
-                                    receiver.balance += amount;
-                                    update(ref(database, 'accounts/' + senderID), { balance: sender.balance })
-                                        .then(() => {
-                                            update(ref(database, 'accounts/' + receiverID), { balance: receiver.balance })
-                                                .then(() => {
-                                                    alert(`Transferencia de $${amount} a ${receiver.id} exitosa.`);
-                                                })
-                                                .catch((error) => {
-                                                    console.error("Error al actualizar el saldo del destinatario:", error);
-                                                    alert("Error al actualizar el saldo del destinatario.");
-                                                });
-                                        })
-                                        .catch((error) => {
-                                            console.error("Error al actualizar el saldo del remitente:", error);
-                                            alert("Error al actualizar el saldo del remitente.");
-                                        });
-                                } else {
-                                    alert("Error en la transferencia.");
-                                }
-                            })
-                            .catch((error) => {
-                                console.error("Error al verificar la cuenta del destinatario:", error);
-                                alert("Error al verificar la cuenta del destinatario.");
-                            });
-                    } else {
-                        alert("Error en la transferencia.");
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error al verificar la cuenta del remitente:", error);
-                    alert("Error al verificar la cuenta del remitente.");
-                });
-        }
-
-        // Iniciar sesión
-        document.getElementById("loginForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-
-            let email = document.getElementById("loginEmail").value;
-            let password = document.getElementById("loginPassword").value;
-
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    let user = userCredential.user;
-                    alert("Inicio de sesión exitoso");
-                })
-                .catch((error) => {
-                    let errorMessage = error.message;
-                    console.error("Error al iniciar sesión:", error);
-                    document.getElementById("loginError").innerText = "Error: " + errorMessage;
-                });
-        });
-
-        // Temporizador para solicitud de tarjetas de crédito
-        function solicitarTarjetaCredito() {
-            let cuentaID = document.getElementById("cuentaID").value;
-            let timer = 48 * 60 * 60 * 1000; // 48 horas en milisegundos
-
-            setTimeout(() => {
-                alert("¡Tu solicitud de tarjeta de crédito ha sido procesada!");
-            }, timer);
-        }
-    </script>
+    <title>ABE - Asociación del Banco Estudiantil</title>
+    <link rel="stylesheet" href="styles.css"> 
 </head>
 <body>
-    <header class="header">
-        <h1>Banco Estudiantil (ABE)</h1>
-        <p>Asistencia: 829-332-9545</p>
-    </header>
 
-    <section class="container">
-        <h2>Registro de Cuenta</h2>
-        <form id="registerForm">
-            <input type="text" id="fullName" placeholder="Nombre Completo" required>
-            <input type="tel" id="phone" placeholder="Número de Teléfono" required>
-            <input type="text" id="schoolName" placeholder="Nombre de la Escuela" required>
-            <input type="text" id="course" placeholder="Curso" required>
-            <input type="number" id="age" placeholder="Edad" required>
-            <select id="accountType" required>
-                <option value="">Seleccione tipo de cuenta</option>
-                <option value="Ahorro">Cuenta de Ahorro</option>
-                <option value="Crédito">Cuenta de Crédito</option>
-                <option value="Préstamo">Cuenta de Préstamo</option>
-            </select>
-            <input type="password" id="password" placeholder="Contraseña" required>
-            <button type="submit">Registrar</button>
-        </form>
-        <p id="accountID"></p>
-    </section>
+    <div class="header">🏦 ABE - Asociación del Banco Estudiantil</div>
 
-    <section class="container">
-        <h2>Verificar Cuenta</h2>
-        <input type="text" id="verifyID" placeholder="Ingrese su ID de cuenta">
-        <input type="password" id="verifyPassword" placeholder="Contraseña">
-        <button onclick="verifyAccount()">Verificar</button>
-        <p id="verificationResult"></p>
-    </section>
+    <!-- Registro -->
+    <div class="container">
+        <h2>🔹 Registro de Usuario</h2>
+        <input type="text" id="nombre" placeholder="Nombre completo">
+        <input type="text" id="telefono" placeholder="Número de teléfono">
+        <input type="password" id="contraseña" placeholder="Contraseña">
+        <button onclick="registrarUsuario()">Registrarse</button>
+        <div id="resultadoRegistro"></div>
+    </div>
 
-    <section class="container">
-        <h2>Operaciones Bancarias</h2>
-        <input type="text" id="accountIDTransaction" placeholder="ID de cuenta">
-        <input type="password" id="passwordTransaction" placeholder="Contraseña">
-        <input type="number" id="amount" placeholder="Monto">
-        <button onclick="deposit()">Depositar</button>
-        <button onclick="withdraw()">Retirar</button>
-    </section>
+    <!-- Inicio de sesión -->
+    <div class="container">
+        <h2>🔹 Iniciar Sesión</h2>
+        <input type="text" id="loginCuenta" placeholder="Número de cuenta">
+        <input type="password" id="loginContraseña" placeholder="Contraseña">
+        <button onclick="iniciarSesion()">Ingresar</button>
+        <div id="resultadoLogin"></div>
+    </div>
 
-    <section class="container">
-        <h2>Transferencias</h2>
-        <input type="text" id="senderID" placeholder="Tu ID de cuenta">
-        <input type="password" id="senderPassword" placeholder="Tu contraseña">
-        <input type="text" id="receiverID" placeholder="ID de cuenta del destinatario">
-        <input type="number" id="transferAmount" placeholder="Monto">
-        <button onclick="transfer()">Transferir</button>
-    </section>
+    <!-- Verificar Saldo -->
+    <div class="container">
+        <h2>🔹 Consulta de Saldo</h2>
+        <button onclick="verificarSaldo()">Ver Saldo</button>
+        <div id="saldoCuenta"></div>
+    </div>
 
-    <section class="container">
-        <h2>Solicitud de Tarjeta de Crédito</h2>
-        <input type="text" id="cuentaID" placeholder="ID de cuenta">
+    <!-- Transferencias -->
+    <div class="container">
+        <h2>🔹 Transferencia de Dinero</h2>
+        <input type="text" id="cuentaDestino" placeholder="Número de cuenta destino">
+        <input type="number" id="montoTransferencia" placeholder="Monto a transferir">
+        <button onclick="transferirDinero()">Transferir</button>
+        <div id="resultadoTransferencia"></div>
+    </div>
+
+    <!-- Depositar -->
+    <div class="container">
+        <h2>🔹 Depositar Dinero</h2>
+        <input type="number" id="montoDeposito" placeholder="Monto a depositar">
+        <button onclick="depositarDinero()">Depositar</button>
+        <div id="resultadoDeposito"></div>
+    </div>
+
+    <!-- Retirar -->
+    <div class="container">
+        <h2>🔹 Retirar Dinero</h2>
+        <input type="number" id="montoRetiro" placeholder="Monto a retirar">
+        <button onclick="retirarDinero()">Retirar</button>
+        <div id="resultadoRetiro"></div>
+    </div>
+
+    <!-- Solicitar Tarjeta de Crédito -->
+    <div class="container">
+        <h2>🔹 Solicitar Tarjeta de Crédito</h2>
         <button onclick="solicitarTarjetaCredito()">Solicitar</button>
-    </section>
+        <div id="resultadoSolicitud"></div>
+    </div>
 
-    <footer class="footer">
-        <p>&copy; 2025 Banco Estudiantil (ABE). Todos los derechos reservados.</p>
-    </footer>
+    <div class="footer">📞 Asistencia: 829-332-9545 | ABE - Asociación del Banco Estudiantil © 2025</div>
+
+    <script src="script.js"></script> 
+
 </body>
 </html>
