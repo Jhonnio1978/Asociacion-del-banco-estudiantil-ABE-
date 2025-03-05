@@ -1,3 +1,16 @@
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDIqEWXCwG379BHrLog-VSvxImB3hT5TRg",
+  authDomain: "banco-estudiantil-ljpd.firebaseapp.com",
+  projectId: "banco-estudiantil-ljpd",
+  storageBucket: "banco-estudiantil-ljpd.firebasestorage.app",
+  messagingSenderId: "539522973722",
+  appId: "1:539522973722:web:fe27d31b6df43dfbd411a3"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 // Recuperar los usuarios almacenados o inicializar la lista
 let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
 
@@ -6,8 +19,18 @@ function generarNumeroCuenta() {
     return Math.floor(1000000000 + Math.random() * 9000000000);
 }
 
+// Función para guardar registros en Firestore
+async function guardarRegistro(data) {
+    try {
+        const docRef = await db.collection("usuarios").add(data);
+        console.log("Registro guardado con ID: ", docRef.id);
+    } catch (e) {
+        console.error("Error al añadir el registro: ", e);
+    }
+}
+
 // Función para registrar un usuario
-function registrarUsuario() {
+async function registrarUsuario() {
     let nombre = document.getElementById("nombre").value;
     let telefono = document.getElementById("telefono").value;
     let contraseña = document.getElementById("contraseña").value;
@@ -26,8 +49,8 @@ function registrarUsuario() {
         saldo: 100 // Saldo inicial 100
     };
 
-    usuarios.push(usuario);
-    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    // Guardar usuario en Firestore
+    await guardarRegistro(usuario);
 
     document.getElementById("resultadoRegistro").innerHTML = 
         `✅ ¡Registro exitoso! Tu número de cuenta es: <b>${numeroCuenta}</b>`;
