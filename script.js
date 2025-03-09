@@ -38,29 +38,44 @@ async function registrarUsuario() {
         return;
     }
     let numeroCuenta = generarNumeroCuenta();
-    let usuario = { nombre, numeroCuenta };
+    let usuario = { nombre, numeroCuenta, saldo: 0 };
     console.log("Registrando usuario:", usuario);
     await guardarRegistro(usuario);
 }
 
 // Función para iniciar sesión
-function iniciarSesion() {
-    let numeroCuenta = document.getElementById("loginCuenta").value;
-    let contraseña = document.getElementById("loginContraseña").value;
-
-    if (numeroCuenta === "" || contraseña === "") {
-        alert("Completa este campo");
+async function iniciarSesion() {
+    let nombre = document.getElementById("nombre").value;
+    if (!nombre) {
+        console.error("El nombre no puede estar vacío");
         return;
     }
 
-    let usuario = usuarios.find(user => user.numeroCuenta == numeroCuenta && user.contraseña == contraseña);
-
-    if (usuario) {
-        localStorage.setItem("usuarioActivo", JSON.stringify(usuario));
-        document.getElementById("resultadoLogin").innerHTML = `✅ ¡Bienvenido, ${usuario.nombre}!`;
-    } else {
-        document.getElementById("resultadoLogin").innerHTML = "⚠️ Cuenta o contraseña incorrecta.";
+    // Buscar el usuario en Firestore
+    const snapshot = await db.collection("usuarios").where("nombre", "==", nombre).get();
+    if (snapshot.empty) {
+        console.error("Usuario no encontrado");
+        return;
     }
+
+    let usuarioActivo;
+    snapshot.forEach(doc => {
+        usuarioActivo = doc.data();
+        usuarioActivo.id = doc.id;
+    });
+
+    // Guardar el usuario activo en localStorage
+    localStorage.setItem("usuarioActivo", JSON.stringify(usuarioActivo));
+
+    // Mostrar mensaje de bienvenida
+    document.getElementById("mensajeBienvenida").innerHTML = 
+        `Bienvenido ${usuarioActivo.nombre}, tu cuenta tiene ${usuarioActivo.saldo} pesos dominicanos.`;
+}
+
+// Función para cerrar sesión
+function cerrarSesion() {
+    localStorage.removeItem("usuarioActivo");
+    document.getElementById("mensajeBienvenida").innerHTML = "";
 }
 
 // Función para verificar saldo
