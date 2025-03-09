@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ABE - Asociación del Banco Estudiantil</title>
+    <title>Banco Estudiantil</title>
     <link rel="stylesheet" href="style.css"> 
     <!-- Firebase App (the core Firebase SDK) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
@@ -14,24 +14,14 @@
 
     <div class="header">🏦 ABE - Asociación del Banco Estudiantil</div>
 
-    <!-- Registro -->
+    <!-- Registro e Inicio de Sesión -->
     <div class="container">
-        <h2>🔹 Registro de Usuario</h2>
-        <input type="text" id="nombre" placeholder="Nombre completo">
-        <input type="text" id="telefono" placeholder="Número de teléfono">
-        <input type="email" id="correo" placeholder="Correo electrónico"> <!-- Nuevo campo de correo electrónico -->
-        <input type="password" id="contraseña" placeholder="Contraseña">
-        <button onclick="registrarUsuario()">Registrarse</button>
-        <div id="resultadoRegistro"></div>
-    </div>
-
-    <!-- Inicio de sesión -->
-    <div class="container">
-        <h2>🔹 Iniciar Sesión</h2>
-        <input type="text" id="loginCuenta" placeholder="Número de cuenta">
-        <input type="password" id="loginContraseña" placeholder="Contraseña">
-        <button onclick="iniciarSesion()">Ingresar</button>
-        <div id="resultadoLogin"></div>
+        <h2>🔹 Registro e Inicio de Sesión</h2>
+        <input type="text" id="nombre" placeholder="Nombre">
+        <button onclick="registrarUsuario()">Registrar Usuario</button>
+        <button onclick="iniciarSesion()">Iniciar Sesión</button>
+        <button onclick="cerrarSesion()">Cerrar Sesión</button>
+        <div id="mensajeBienvenida"></div>
     </div>
 
     <!-- Verificar Saldo -->
