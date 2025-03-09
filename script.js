@@ -71,6 +71,40 @@ function registrarUsuario() {
         `✅ Registro exitoso. Tu número de cuenta es: ${numeroCuenta}`;
 }
 
+// Base de datos ficticia
+const cuentas = {
+    "9087674523": { nombre: "Jhonnio Saint Fort", tipoCuenta: "Cuenta de Ahorro", saldo: 900, contrasena: "1234" },
+    "1234567890": { nombre: "Norvis Ramirez", tipoCuenta: "Cuenta de Ahorro", saldo: 900, contrasena: "1234" },
+    "2345678901": { nombre: "Maria Robles", tipoCuenta: "Cuenta de Ahorro", saldo: 900, contrasena: "1234" },
+    "3456789012": { nombre: "Sherlin Alexandra", tipoCuenta: "Cuenta de Ahorro", saldo: 900, contrasena: "1234" },
+    "4567890123": { nombre: "Orquidea Mieses", tipoCuenta: "Cuenta de Ahorro", saldo: 900, contrasena: "1234" },
+    "5678901234": { nombre: "Ashley Nachali", tipoCuenta: "Cuenta de Ahorro", saldo: 900, contrasena: "1234" },
+    "6789012345": { nombre: "Mirianlly Elizabeth", tipoCuenta: "Cuenta de Ahorro", saldo: 900, contrasena: "1234" },
+    "7890123456": { nombre: "Bianny Lisbette", tipoCuenta: "Cuenta de Ahorro", saldo: 900, contrasena: "1234" },
+    "8901234567": { nombre: "Carlos David", tipoCuenta: "Cuenta de Ahorro", saldo: 900, contrasena: "1234" },
+    "9012345678": { nombre: "Freily Antonio", tipoCuenta: "Cuenta de Ahorro", saldo: 900, contrasena: "1234" },
+    "1234509876": { nombre: "Luisanna Yamilex", tipoCuenta: "Cuenta de Ahorro", saldo: 900, contrasena: "1234" },
+    "2345609876": { nombre: "Patricia de la Cruz", tipoCuenta: "Cuenta de Ahorro", saldo: 900, contrasena: "1234" },
+    "3456709876": { nombre: "Luis Miguel", tipoCuenta: "Cuenta de Ahorro", saldo: 900, contrasena: "1234" },
+    "4567809876": { nombre: "Candy Ironelis", tipoCuenta: "Cuenta de Ahorro", saldo: 900, contrasena: "1234" },
+    "5678909876": { nombre: "Ismael Tavarez", tipoCuenta: "Cuenta de Ahorro", saldo: 900, contrasena: "1234" },
+    "6789009876": { nombre: "Javier Torres", tipoCuenta: "Cuenta de Ahorro", saldo: 900, contrasena: "1234" }
+};
+
+// Función para buscar cuenta
+function buscarCuenta() {
+    let numeroCuenta = document.getElementById("accountNumber").value;
+    let resultado = document.getElementById("resultado");
+
+    if (cuentas[numeroCuenta]) {
+        resultado.innerHTML = `<strong>Nombre:</strong> ${cuentas[numeroCuenta].nombre}<br>
+                               <strong>Tipo de Cuenta:</strong> ${cuentas[numeroCuenta].tipoCuenta}<br>
+                               <strong>Saldo:</strong> RD$${cuentas[numeroCuenta].saldo}`;
+    } else {
+        resultado.innerHTML = "Cuenta no encontrada.";
+    }
+}
+
 // Función para iniciar sesión
 function iniciarSesion() {
     let id = document.getElementById("id").value;
@@ -81,9 +115,9 @@ function iniciarSesion() {
         return;
     }
 
-    // Buscar el usuario en localStorage
-    let usuarioActivo = usuarios.find(user => user.numeroCuenta == id && user.contrasena == contrasena);
-    if (!usuarioActivo) {
+    // Buscar el usuario en la base de datos ficticia
+    let usuarioActivo = cuentas[id];
+    if (!usuarioActivo || usuarioActivo.contrasena !== contrasena) {
         document.getElementById("mensajeBienvenida").innerHTML = "⚠️ Usuario no encontrado o contraseña incorrecta.";
         return;
     }
@@ -93,7 +127,7 @@ function iniciarSesion() {
 
     // Mostrar mensaje de bienvenida
     document.getElementById("mensajeBienvenida").innerHTML = 
-        `Bienvenido ${usuarioActivo.nombre}, tu cuenta tiene ${usuarioActivo.saldo} pesos dominicanos.`;
+        `Bienvenido ${usuarioActivo.nombre}, tu cuenta tiene RD$${usuarioActivo.saldo} pesos dominicanos.`;
 }
 
 // Función para cerrar sesión
@@ -113,7 +147,7 @@ function verificarSaldo() {
 
     if (usuarioActivo) {
         document.getElementById("saldoCuenta").innerHTML = 
-            `💰 Tu saldo actual es: <b>${usuarioActivo.saldo} pesos dominicanos</b>`;
+            `💰 Tu saldo actual es: <b>RD$${usuarioActivo.saldo} pesos dominicanos</b>`;
     } else {
         document.getElementById("saldoCuenta").innerHTML = "⚠️ Debes iniciar sesión primero.";
     }
@@ -135,7 +169,7 @@ function transferirDinero() {
         return;
     }
 
-    let destinatario = usuarios.find(user => user.numeroCuenta == cuentaDestino);
+    let destinatario = cuentas[cuentaDestino];
 
     if (!destinatario) {
         document.getElementById("resultadoTransferencia").innerHTML = "⚠️ La cuenta destino no existe.";
@@ -151,16 +185,13 @@ function transferirDinero() {
     destinatario.saldo += monto;
 
     // Guardar cambios en localStorage
-    usuarios = usuarios.map(user => 
-        user.numeroCuenta == usuarioActivo.numeroCuenta ? usuarioActivo : 
-        user.numeroCuenta == destinatario.numeroCuenta ? destinatario : user
-    );
-
-    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    cuentas[usuarioActivo.numeroCuenta] = usuarioActivo;
+    cuentas[cuentaDestino] = destinatario;
+    localStorage.setItem("cuentas", JSON.stringify(cuentas));
     localStorage.setItem("usuarioActivo", JSON.stringify(usuarioActivo));
 
     document.getElementById("resultadoTransferencia").innerHTML = 
-        `✅ Transferencia de ${monto} pesos dominicanos realizada a la cuenta ${cuentaDestino}`;
+        `✅ Transferencia de RD$${monto} pesos dominicanos realizada a la cuenta ${cuentaDestino}`;
 }
 
 // Función para depositar dinero
@@ -181,15 +212,12 @@ function depositarDinero() {
     usuarioActivo.saldo += monto;
 
     // Guardar cambios en localStorage
-    usuarios = usuarios.map(user => 
-        user.numeroCuenta == usuarioActivo.numeroCuenta ? usuarioActivo : user
-    );
-
-    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    cuentas[usuarioActivo.numeroCuenta] = usuarioActivo;
+    localStorage.setItem("cuentas", JSON.stringify(cuentas));
     localStorage.setItem("usuarioActivo", JSON.stringify(usuarioActivo));
 
     document.getElementById("resultadoDeposito").innerHTML = 
-        `✅ Depósito de ${monto} pesos dominicanos realizado correctamente.`;
+        `✅ Depósito de RD$${monto} pesos dominicanos realizado correctamente.`;
 }
 
 // Función para retirar dinero
@@ -215,15 +243,12 @@ function retirarDinero() {
     usuarioActivo.saldo -= monto;
 
     // Guardar cambios en localStorage
-    usuarios = usuarios.map(user => 
-        user.numeroCuenta == usuarioActivo.numeroCuenta ? usuarioActivo : user
-    );
-
-    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    cuentas[usuarioActivo.numeroCuenta] = usuarioActivo;
+    localStorage.setItem("cuentas", JSON.stringify(cuentas));
     localStorage.setItem("usuarioActivo", JSON.stringify(usuarioActivo));
 
     document.getElementById("resultadoRetiro").innerHTML = 
-        `✅ Retiro de ${monto} pesos dominicanos realizado correctamente.`;
+        `✅ Retiro de RD$${monto} pesos dominicanos realizado correctamente.`;
 }
 
 // Función para solicitar tarjeta de crédito
