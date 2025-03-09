@@ -1,11 +1,11 @@
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDIqEWXCwG379BHrLog-VSvxImB3hT5TRg",
-  authDomain: "banco-estudiantil-ljpd.firebaseapp.com",
-  projectId: "banco-estudiantil-ljpd",
-  storageBucket: "banco-estudiantil-ljpd.firebasestorage.app",
-  messagingSenderId: "539522973722",
-  appId: "1:539522973722:web:fe27d31b6df43dfbd411a3"
+    apiKey: "AIzaSyDIqEWXCwG379BHrLog-VSvxImB3hT5TRg",
+    authDomain: "banco-estudiantil-ljpd.firebaseapp.com",
+    projectId: "banco-estudiantil-ljpd",
+    storageBucket: "banco-estudiantil-ljpd.firebasestorage.app",
+    messagingSenderId: "539522973722",
+    appId: "1:539522973722:web:fe27d31b6df43dfbd411a3"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -22,6 +22,7 @@ function generarNumeroCuenta() {
 // Función para guardar registros en Firestore
 async function guardarRegistro(data) {
     try {
+        console.log("Intentando guardar el registro en Firestore:", data);
         const docRef = await db.collection("usuarios").add(data);
         console.log("Registro guardado con ID: ", docRef.id);
     } catch (e) {
@@ -32,35 +33,14 @@ async function guardarRegistro(data) {
 // Función para registrar un usuario
 async function registrarUsuario() {
     let nombre = document.getElementById("nombre").value;
-    let telefono = document.getElementById("telefono").value;
-    let correo = document.getElementById("correo").value; // Nuevo campo de correo electrónico
-    let contraseña = document.getElementById("contraseña").value;
-
-    if (nombre === "" || telefono === "" || correo === "" || contraseña === "") {
-        alert("Por favor, completa todos los campos.");
+    if (!nombre) {
+        console.error("El nombre no puede estar vacío");
         return;
     }
-
     let numeroCuenta = generarNumeroCuenta();
-    let usuario = {
-        nombre: nombre,
-        telefono: telefono,
-        correo: correo, // Agregar el correo al objeto usuario
-        numeroCuenta: numeroCuenta,
-        contraseña: contraseña,
-        saldo: 100 // Saldo inicial 100
-    };
-
-    // Guardar usuario en Firestore
+    let usuario = { nombre, numeroCuenta };
+    console.log("Registrando usuario:", usuario);
     await guardarRegistro(usuario);
-
-    document.getElementById("resultadoRegistro").innerHTML = 
-        `✅ ¡Registro exitoso! Tu número de cuenta es: <b>${numeroCuenta}</b>`;
-
-    document.getElementById("nombre").value = "";
-    document.getElementById("telefono").value = "";
-    document.getElementById("correo").value = ""; // Limpiar el campo de correo electrónico
-    document.getElementById("contraseña").value = "";
 }
 
 // Función para iniciar sesión
