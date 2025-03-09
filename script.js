@@ -19,50 +19,74 @@ function generarNumeroCuenta() {
     return Math.floor(1000000000 + Math.random() * 9000000000);
 }
 
-// Función para guardar registros en Firestore
-async function guardarRegistro(data) {
-    try {
-        console.log("Intentando guardar el registro en Firestore:", data);
-        const docRef = await db.collection("usuarios").add(data);
-        console.log("Registro guardado con ID: ", docRef.id);
-    } catch (e) {
-        console.error("Error al añadir el registro: ", e);
+// Genera 30 IDs de cuentas únicos y los almacena en localStorage
+function generarCuentas() {
+    let cuentas = [];
+    for (let i = 0; i < 30; i++) {
+        cuentas.push(generarNumeroCuenta());
     }
+    localStorage.setItem("cuentas", JSON.stringify(cuentas));
+}
+
+// Llama a esta función una vez para generar las cuentas
+if (!localStorage.getItem("cuentas")) {
+    generarCuentas();
+}
+
+// Función para guardar registros en localStorage
+function guardarRegistro(usuario) {
+    usuarios.push(usuario);
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    console.log("Registro guardado:", usuario);
 }
 
 // Función para registrar un usuario
-async function registrarUsuario() {
+function registrarUsuario() {
     let nombre = document.getElementById("nombre").value;
-    if (!nombre) {
-        console.error("El nombre no puede estar vacío");
+    let telefono = document.getElementById("telefono").value;
+    let correo = document.getElementById("correo").value;
+    let contrasena = document.getElementById("contrasena").value;
+    let escuela = document.getElementById("escuela").value;
+
+    if (!nombre || !telefono || !correo || !contrasena || !escuela) {
+        console.error("Todos los campos son obligatorios");
         return;
     }
-    let numeroCuenta = generarNumeroCuenta();
-    let usuario = { nombre, numeroCuenta, saldo: 0 };
+
+    // Obtener una cuenta disponible
+    let cuentas = JSON.parse(localStorage.getItem("cuentas"));
+    if (cuentas.length === 0) {
+        console.error("No hay cuentas disponibles");
+        return;
+    }
+    let numeroCuenta = cuentas.pop();
+    localStorage.setItem("cuentas", JSON.stringify(cuentas));
+
+    let usuario = { nombre, telefono, correo, contrasena, escuela, numeroCuenta, saldo: 0 };
     console.log("Registrando usuario:", usuario);
-    await guardarRegistro(usuario);
+    guardarRegistro(usuario);
+
+    // Mostrar el número de cuenta al usuario
+    document.getElementById("mensajeRegistro").innerHTML = 
+        `Registro exitoso. Tu número de cuenta es: ${numeroCuenta}`;
 }
 
 // Función para iniciar sesión
-async function iniciarSesion() {
-    let nombre = document.getElementById("nombre").value;
-    if (!nombre) {
-        console.error("El nombre no puede estar vacío");
+function iniciarSesion() {
+    let id = document.getElementById("id").value;
+    let contrasena = document.getElementById("contrasenaLogin").value;
+
+    if (!id || !contrasena) {
+        console.error("El ID y la contraseña son obligatorios");
         return;
     }
 
-    // Buscar el usuario en Firestore
-    const snapshot = await db.collection("usuarios").where("nombre", "==", nombre).get();
-    if (snapshot.empty) {
-        console.error("Usuario no encontrado");
+    // Buscar el usuario en localStorage
+    let usuarioActivo = usuarios.find(user => user.numeroCuenta == id && user.contrasena == contrasena);
+    if (!usuarioActivo) {
+        console.error("Usuario no encontrado o contraseña incorrecta");
         return;
     }
-
-    let usuarioActivo;
-    snapshot.forEach(doc => {
-        usuarioActivo = doc.data();
-        usuarioActivo.id = doc.id;
-    });
 
     // Guardar el usuario activo en localStorage
     localStorage.setItem("usuarioActivo", JSON.stringify(usuarioActivo));
