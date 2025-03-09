@@ -49,14 +49,14 @@ function registrarUsuario() {
     let escuela = document.getElementById("escuela").value;
 
     if (!nombre || !telefono || !correo || !contrasena || !escuela) {
-        console.error("Todos los campos son obligatorios");
+        document.getElementById("mensajeRegistro").innerHTML = "⚠️ Todos los campos son obligatorios.";
         return;
     }
 
     // Obtener una cuenta disponible
     let cuentas = JSON.parse(localStorage.getItem("cuentas"));
     if (cuentas.length === 0) {
-        console.error("No hay cuentas disponibles");
+        document.getElementById("mensajeRegistro").innerHTML = "⚠️ No hay cuentas disponibles.";
         return;
     }
     let numeroCuenta = cuentas.pop();
@@ -68,7 +68,7 @@ function registrarUsuario() {
 
     // Mostrar el número de cuenta al usuario
     document.getElementById("mensajeRegistro").innerHTML = 
-        `Registro exitoso. Tu número de cuenta es: ${numeroCuenta}`;
+        `✅ Registro exitoso. Tu número de cuenta es: ${numeroCuenta}`;
 }
 
 // Función para iniciar sesión
@@ -77,14 +77,14 @@ function iniciarSesion() {
     let contrasena = document.getElementById("contrasenaLogin").value;
 
     if (!id || !contrasena) {
-        console.error("El ID y la contraseña son obligatorios");
+        document.getElementById("mensajeBienvenida").innerHTML = "⚠️ El ID y la contraseña son obligatorios.";
         return;
     }
 
     // Buscar el usuario en localStorage
     let usuarioActivo = usuarios.find(user => user.numeroCuenta == id && user.contrasena == contrasena);
     if (!usuarioActivo) {
-        console.error("Usuario no encontrado o contraseña incorrecta");
+        document.getElementById("mensajeBienvenida").innerHTML = "⚠️ Usuario no encontrado o contraseña incorrecta.";
         return;
     }
 
@@ -113,7 +113,7 @@ function verificarSaldo() {
 
     if (usuarioActivo) {
         document.getElementById("saldoCuenta").innerHTML = 
-            `💰 Tu saldo actual es: <b>${usuarioActivo.saldo} USD</b>`;
+            `💰 Tu saldo actual es: <b>${usuarioActivo.saldo} pesos dominicanos</b>`;
     } else {
         document.getElementById("saldoCuenta").innerHTML = "⚠️ Debes iniciar sesión primero.";
     }
@@ -160,7 +160,7 @@ function transferirDinero() {
     localStorage.setItem("usuarioActivo", JSON.stringify(usuarioActivo));
 
     document.getElementById("resultadoTransferencia").innerHTML = 
-        `✅ Transferencia de ${monto} USD realizada a la cuenta ${cuentaDestino}`;
+        `✅ Transferencia de ${monto} pesos dominicanos realizada a la cuenta ${cuentaDestino}`;
 }
 
 // Función para depositar dinero
@@ -189,7 +189,7 @@ function depositarDinero() {
     localStorage.setItem("usuarioActivo", JSON.stringify(usuarioActivo));
 
     document.getElementById("resultadoDeposito").innerHTML = 
-        `✅ Depósito de ${monto} USD realizado correctamente.`;
+        `✅ Depósito de ${monto} pesos dominicanos realizado correctamente.`;
 }
 
 // Función para retirar dinero
@@ -223,7 +223,7 @@ function retirarDinero() {
     localStorage.setItem("usuarioActivo", JSON.stringify(usuarioActivo));
 
     document.getElementById("resultadoRetiro").innerHTML = 
-        `✅ Retiro de ${monto} USD realizado correctamente.`;
+        `✅ Retiro de ${monto} pesos dominicanos realizado correctamente.`;
 }
 
 // Función para solicitar tarjeta de crédito
