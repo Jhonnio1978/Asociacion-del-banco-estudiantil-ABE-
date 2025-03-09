@@ -14,11 +14,23 @@
 
     <div class="header">🏦 ABE - Asociación del Banco Estudiantil</div>
 
-    <!-- Registro e Inicio de Sesión -->
+    <!-- Registro -->
     <div class="container">
-        <h2>🔹 Registro e Inicio de Sesión</h2>
+        <h2>🔹 Registro</h2>
         <input type="text" id="nombre" placeholder="Nombre">
+        <input type="text" id="telefono" placeholder="Teléfono">
+        <input type="email" id="correo" placeholder="Correo">
+        <input type="password" id="contrasena" placeholder="Contraseña">
+        <input type="text" id="escuela" placeholder="Escuela">
         <button onclick="registrarUsuario()">Registrar Usuario</button>
+        <div id="mensajeRegistro"></div>
+    </div>
+
+    <!-- Inicio de Sesión -->
+    <div class="container">
+        <h2>🔹 Inicio de Sesión</h2>
+        <input type="text" id="id" placeholder="ID de Usuario">
+        <input type="password" id="contrasenaLogin" placeholder="Contraseña">
         <button onclick="iniciarSesion()">Iniciar Sesión</button>
         <button onclick="cerrarSesion()">Cerrar Sesión</button>
         <div id="mensajeBienvenida"></div>
