@@ -26,6 +26,14 @@
         <div id="mensajeRegistro"></div>
     </div>
 
+    <!-- Buscar Cuenta -->
+    <div class="container">
+        <h2>🔹 Buscar Cuenta</h2>
+        <input type="text" id="accountNumber" placeholder="Número de Cuenta">
+        <button onclick="buscarCuenta()">Buscar Cuenta</button>
+        <div id="resultado"></div>
+    </div>
+
     <!-- Inicio de Sesión -->
     <div class="container">
         <h2>🔹 Inicio de Sesión</h2>
@@ -34,6 +42,30 @@
         <button onclick="iniciarSesion()">Iniciar Sesión</button>
         <button onclick="cerrarSesion()">Cerrar Sesión</button>
         <div id="mensajeBienvenida"></div>
+    </div>
+
+    <!-- Verificar Saldo -->
+    <div class="container">
+        <h2>🔹 Verificar Saldo</h2>
+        <button onclick="verificarSaldo()">Verificar Saldo</button>
+        <div id="saldoCuenta"></div>
+    </div>
+
+    <!-- Transferir -->
+    <div class="container">
+        <h2>🔹 Transferir Dinero</h2>
+        <input type="text" id="cuentaDestino" placeholder="Cuenta Destino">
+        <input type="number" id="montoTransferencia" placeholder="Monto a Transferir">
+        <button onclick="transferirDinero()">Transferir</button>
+        <div id="resultadoTransferencia"></div>
+    </div>
+
+    <!-- Depositar -->
+    <div class="container">
+        <h2>🔹 Depositar Dinero</h2>
+        <input type="number" id="montoDeposito" placeholder="Monto a Depositar">
+        <button onclick="depositarDinero()">Depositar</button>
+        <div id="resultadoDeposito"></div>
     </div>
 
     <!-- Retirar -->
